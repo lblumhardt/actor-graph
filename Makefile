@@ -20,7 +20,7 @@ all: pathfinder
 
 # include what ever source code *.hpp files pathfinder relies on (these are merely the ones that were used in the solution)
 
-pathfinder: ActorGraph.o
+pathfinder: ActorGraph.o Movie.o ActorNode.o
 
 
 
@@ -28,7 +28,7 @@ pathfinder: ActorGraph.o
 
 # Note: you do not have to include a *.cpp file if it aleady has a paired *.hpp file that is already included with class/method headers
 
-ActorGraph.o: UnionFind.hpp Movie.hpp ActorNode.hpp ActorEdge.hpp ActorGraph.hpp
+ActorGraph.o: Movie.hpp ActorNode.o ActorGraph.o
 
 
 clean:

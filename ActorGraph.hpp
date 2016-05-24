@@ -1,7 +1,7 @@
 /*
  * ActorGraph.hpp
- * Author: <YOUR NAME HERE>
- * Date:   <DATE HERE>
+ * Author: Lucas Blumhardt A12020745 
+ * Date:   5/22/2016
  *
  * This file is meant to exist as a container for starter code that you can use to read the input file format
  * defined in movie_casts.tsv. Feel free to modify any/all aspects as you wish.
@@ -11,15 +11,36 @@
 #define ACTORGRAPH_HPP
 
 #include <iostream>
+#include "ActorNode.hpp"
+#include "Movie.hpp"
+#include <unordered_map>
 
 // Maybe include some data structures here
 
 using namespace std;
 
 class ActorGraph {
-protected:
   
-    // Maybe add class data structure(s) here
+  class ActorNodeComp {  
+    
+    public:
+    
+      bool operator()(ActorNode* p1, ActorNode* p2) const;
+  };
+
+  class MovieComp {
+    
+    public:
+  
+      bool operator()(Movie* m1, Movie* m2) const;
+  };
+
+
+protected:
+
+  unordered_map<string, ActorNode*> allActors;
+  unordered_map<string, Movie*> allMovies;
+    
 
 public:
     ActorGraph(void);
@@ -35,8 +56,10 @@ public:
      *
      * return true if file was loaded sucessfully, false otherwise
      */
-    bool loadFromFile(const char* in_filename, bool use_weighted_edges);
+  bool loadFromFile(const char* in_filename, bool use_weighted_edges);
   
+  //main method used to find a path between two actors
+  void findPath(string start, string dest);
 };
 
 
