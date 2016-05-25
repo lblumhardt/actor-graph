@@ -17,6 +17,7 @@ using namespace std;
 Movie::Movie(string title, int year) {
   this->title = title;
   this->year = year;
+  this->visited = false;
 }
 
 string Movie::formUniqueTitle() {
@@ -38,4 +39,12 @@ set<string> Movie::getCast() {
 bool Movie::addToCast(string actor) {
   auto tempPair = this->cast.insert(actor);
   return tempPair.second;
+}
+
+bool Movie::isVisited() {
+  return this->visited;
+}
+
+void Movie::visit() {
+  this->visited = true;
 }

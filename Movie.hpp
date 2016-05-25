@@ -19,6 +19,7 @@ private:
   string title;
   int year;
   set<string> cast;
+  bool visited;
 
 public:
   Movie(string title, int year);
@@ -35,7 +36,9 @@ public:
   //mutator declarations
   bool addToCast(string actor);
 
-  
+  bool isVisited();
+
+  void visit(); 
 };
 
 

@@ -18,7 +18,10 @@ class ActorNode {
 private:
   //member vars
   string name;
-  set<Movie*> movies;	//movies this actor has starred in
+  set<string> movies;	//movies this actor has starred in
+  ActorNode* source;
+  string sourceMovie;
+  bool visited;
 
 public:
   ActorNode(string name);
@@ -26,11 +29,22 @@ public:
   //getter declarations
   string getName();
 
-  set<Movie*> getMovies();
+  set<string> getMovies();
   
   //mutator declarations
-  bool addToMovies(Movie* movieToAdd);
-  
+  bool addToMovies(string movieToAdd);
+ 
+  bool isVisited();
+
+  void visit(); 
+
+  void setSource(ActorNode* s);
+
+  ActorNode* getSource();
+
+  void setSourceMovie(string s);
+
+  string getSourceMovie();
 };
 
 

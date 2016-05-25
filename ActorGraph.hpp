@@ -13,6 +13,7 @@
 #include <iostream>
 #include "ActorNode.hpp"
 #include "Movie.hpp"
+#include "Edge.hpp"
 #include <unordered_map>
 
 // Maybe include some data structures here
