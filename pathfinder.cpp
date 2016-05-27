@@ -6,9 +6,6 @@
 
 std::string formOutputString(vector<std::pair<std::string, Movie*>> v) {
   //if v's size is 0, the find failed, don't add anything
-  if(v.size() == 0) {
-    return "";
-  }
   string a = "";
   Movie* m;
   string retString = "";
@@ -58,7 +55,7 @@ int main(int argc, char *argv[]) {
   
   //process the fourth arg
   std::ofstream output(argv[4], std::ofstream::out);
-  output << "(actor)--[movie#@year]-->(actor--...\n";
+  output << "(actor)--[movie#@year]-->(actor--...\n---\n";
   ActorGraph graph;
   graph.loadFromFile(file, weighted); 
 
