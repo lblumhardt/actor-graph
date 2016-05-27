@@ -58,6 +58,7 @@ int main(int argc, char *argv[]) {
   
   //process the fourth arg
   std::ofstream output(argv[4], std::ofstream::out);
+  output << "(actor)--[movie#@year]-->(actor--...\n";
   ActorGraph graph;
   graph.loadFromFile(file, weighted); 
 
