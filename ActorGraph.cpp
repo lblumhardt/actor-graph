@@ -37,6 +37,9 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
   // Initialize the file stream
   ifstream infile(in_filename);
 
+  int numAct = 0;
+  int numMov = 0;
+
   bool have_header = false;
 
   // keep reading lines until the end of file is reached
@@ -84,6 +87,7 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
       if(c == 0) {
         //add it to map, update movie in node
         allActors.insert(std::make_pair(actor_name,currActor));
+        numAct++;
         //cout << "I'm adding " << actor_name << " to allActors for the first time! \n";
         currActor->addToMovies(uniqueTitle);
       }
@@ -105,6 +109,7 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
       if(c == 0) {
         //add it to map, update its cast
         //cout << "I'm adding " << uniqueTitle << " to allMovies for the first time! \n";
+        numMov++;
         allMovies.insert(std::make_pair(uniqueTitle, currMovie));
         (*currMovie).addToCast(actor_name);
         //cout << "I added " << actor_name << " to " << uniqueTitle << "'s cast \n";
@@ -119,7 +124,8 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         (*it2).second->addToCast(actor_name);
       }
   }
-
+  cout << "Total num of Actors: " << numAct << "\n";
+  cout << "Total num of Movies: " << numMov << "\n";
   if (!infile.eof()) {
     cerr << "Failed to read " << in_filename << "!\n";
     return false;
@@ -168,6 +174,9 @@ vector<pair<string,Movie*>> ActorGraph::uBFS(string start, string dest) {
       //cout << dest << " starred in " << (*itr2)->formUniqueTitle() << "\n";
       if(currMovie == m2[j]) {
         cout << start << " and " << dest << " stared in " << currMovie << " together!! \n";
+        realPath.push_back(make_pair(start,allMovies.at(currMovie)));
+        realPath.push_back(make_pair(dest,nullptr));
+        return realPath;
       } 
     }
   }

@@ -78,9 +78,12 @@ int main(int argc, char *argv[]) {
       }
       apair.push_back(next);
       vector<pair<string,Movie*>> outPath;
-      outPath = graph.uBFS(apair[0], apair[1]); 
-      string toWrite = formOutputString(outPath);
-      output << toWrite;
+      if(apair.size() == 2) {
+        outPath = graph.uBFS(apair[0], apair[1]); 
+        string toWrite = formOutputString(outPath);
+        output << toWrite;
+        apair.clear();
+      }
     }
 
   } 
