@@ -15,6 +15,8 @@
 #include "Movie.hpp"
 #include "Edge.hpp"
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
 // Maybe include some data structures here
 
@@ -60,7 +62,7 @@ public:
   bool loadFromFile(const char* in_filename, bool use_weighted_edges);
   
   //main method used to find a path between two actors
-  void findPath(string start, string dest);
+  vector<pair<string,Movie*>> uBFS(string start, string dest);
 };
 
 

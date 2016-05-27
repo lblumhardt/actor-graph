@@ -32,13 +32,13 @@ int Movie::getYear() {
   return this->year;
 }
 
-set<string> Movie::getCast() {
+vector<string> Movie::getCast() {
   return this->cast;
 }
 
 bool Movie::addToCast(string actor) {
-  auto tempPair = this->cast.insert(actor);
-  return tempPair.second;
+  this->cast.push_back(actor);
+  return true;
 }
 
 bool Movie::isVisited() {

@@ -4,6 +4,27 @@
 #include <iostream>
 #include "ActorGraph.hpp"
 
+std::string formOutputString(vector<std::pair<std::string, Movie*>> v) {
+  //if v's size is 0, the find failed, don't add anything
+  if(v.size() == 0) {
+    return "";
+  }
+  string a = "";
+  Movie* m;
+  string retString = "";
+  for(int i=0; i < v.size(); i++) {
+    auto p = v[i];
+    a = p.first;
+    m = p.second;
+    retString = retString + "(" + a + ")";
+    if(m != nullptr) {
+      retString = retString + "--[" + m->getTitle() + "#@" + to_string(m->getYear()) + "]-->";
+    }
+  }
+  retString = retString + "\n";
+  return retString;
+}
+
 int main(int argc, char *argv[]) {
 
   //check number of args
@@ -37,13 +58,42 @@ int main(int argc, char *argv[]) {
   
   //process the fourth arg
   std::ofstream output(argv[4], std::ofstream::out);
-
   ActorGraph graph;
   graph.loadFromFile(file, weighted); 
 
+  while(actorPairs) {
+
+    string tmp;
+    if(!getline(actorPairs, tmp)) {
+      break;
+    }
+    istringstream ss(tmp);
+    vector<string> apair;
+    while(ss) {
+      string next;
+
+      if(!getline(ss, next, '\t')) {
+        break;
+      }
+      apair.push_back(next);
+      vector<pair<string,Movie*>> outPath;
+      outPath = graph.uBFS(apair[0], apair[1]); 
+      string toWrite = formOutputString(outPath);
+      output << toWrite;
+    }
+
+  } 
+
+
   //distance is 1, should work
   //graph.findPath("ROCK LEE", "MIGHT GUY");
-  graph.findPath("ROCK LEE", "JAMES PERSON");
+  //graph.findPath("ROCK LEE", "JAMES PERSON");
+  //vector<pair<string,Movie*>> outPath;
+  //outPath = graph.uBFS("50 CENT", "ABDOO, ROSE");
+  //outPath = graph.uBFS("BACON, KEVIN (I)", "HOUNSOU, DJIMON");
+  //string s = formOutputString(outPath);
+  //cout << s << "\n";
+  //outPath = graph.uBFS("ABDOO, ROSE", "50 CENT");
 
 /* 
   //invalid actors, should fail

@@ -33,13 +33,13 @@ string ActorNode::getName() {
   return this->name;
 }
 
-set<string> ActorNode::getMovies() {
+vector<string> ActorNode::getMovies() {
   return this->movies;
 }
 
 bool ActorNode::addToMovies(string movieToAdd) {
-  auto tempPair = this->movies.insert(movieToAdd);
-  return tempPair.second;
+  this->movies.push_back(movieToAdd);
+  return true;
 }
 
 void ActorNode::setSource(ActorNode* s) {

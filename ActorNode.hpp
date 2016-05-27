@@ -10,6 +10,7 @@
 #define ACTORNODE_HPP
 #include <iostream>
 #include <set>
+#include <vector>
 #include "Movie.hpp"
 
 using namespace std;
@@ -18,7 +19,7 @@ class ActorNode {
 private:
   //member vars
   string name;
-  set<string> movies;	//movies this actor has starred in
+  vector<string> movies;	//movies this actor has starred in
   ActorNode* source;
   string sourceMovie;
   bool visited;
@@ -29,7 +30,7 @@ public:
   //getter declarations
   string getName();
 
-  set<string> getMovies();
+  vector<string> getMovies();
   
   //mutator declarations
   bool addToMovies(string movieToAdd);

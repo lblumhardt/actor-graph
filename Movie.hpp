@@ -18,7 +18,7 @@ private:
   //member vars
   string title;
   int year;
-  set<string> cast;
+  vector<string> cast;
   bool visited;
 
 public:
@@ -31,7 +31,7 @@ public:
 
   int getYear();
 
-  set<string> getCast();
+  vector<string> getCast();
   
   //mutator declarations
   bool addToCast(string actor);
