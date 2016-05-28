@@ -6,9 +6,9 @@
 
 std::string formOutputString(vector<std::pair<std::string, Movie*>> v) {
   //if v's size is 0, the find failed, don't add anything
-  string a = "";
+  string a;
   Movie* m;
-  string retString = "";
+  string retString;
   for(int i=0; i < v.size(); i++) {
     auto p = v[i];
     a = p.first;
