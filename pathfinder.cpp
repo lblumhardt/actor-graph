@@ -59,12 +59,20 @@ int main(int argc, char *argv[]) {
   ActorGraph graph;
   graph.loadFromFile(file, weighted); 
 
+  bool have_header = false;
+ 
   while(actorPairs) {
 
     string tmp;
     if(!getline(actorPairs, tmp)) {
       break;
     }
+
+    if(!have_header) {
+      have_header = true;
+      continue;
+    }
+ 
     istringstream ss(tmp);
     vector<string> apair;
     while(ss) {

@@ -162,8 +162,6 @@ vector<pair<string,Movie*>> ActorGraph::uBFS(string start, string dest) {
   //cout << "dont look there \n";
 
   string currMovie = "";
-  //auto itr1 = m1.begin();
-  //auto itr2 = m2.begin();
   for(int i=0; i < m1.size(); i++) {
   //while(itr1 != m1.end()) {
     currMovie = m1[i];
