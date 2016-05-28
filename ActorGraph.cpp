@@ -21,18 +21,10 @@ using namespace std;
 
 ActorGraph::ActorGraph(void) {}
 
-/*
-//comparator used for the set of ActorNode pointers allActors
-bool ActorGraph::ActorNodeComp::operator()(ActorNode* p1, ActorNode* p2) const {
-  return (*p1).getName() < (*p2).getName();
-}
-
-bool operator()(Movie* m1, Movie* m2) const {
-  
-}
-*/
-
-
+/* Loads in the actors and their movies from in_filename
+ * Creates a cast list for every Movie and a list of roles for every Actor
+ * Stores movies and actors in their respective unordered_maps
+ * */
 bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) {
   // Initialize the file stream
   ifstream infile(in_filename);
@@ -135,7 +127,8 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
   return true;
 }
 
-/* A naive, unweighted Breadth First Search algorithm
+/* A naive, unweighted Breadth First Search algorithm to find the path from
+ * one actor to another. Unfortunately it currently doesn't find the shortest path
  * */
 vector<pair<string,Movie*>> ActorGraph::uBFS(string start, string dest) {
   bool done = false;
