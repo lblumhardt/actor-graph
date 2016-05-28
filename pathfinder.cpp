@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
   
   //process the fourth arg
   std::ofstream output(argv[4], std::ofstream::out);
-  output << "(actor)--[movie#@year]-->(actor--...";
+  output << "(actor)--[movie#@year]-->(actor--...\n";
   ActorGraph graph;
   graph.loadFromFile(file, weighted); 
 
@@ -84,6 +84,7 @@ int main(int argc, char *argv[]) {
       apair.push_back(next);
       vector<pair<string,Movie*>> outPath;
       if(apair.size() == 2) {
+        cout << " IM TRYNA FIND "<< apair[0] << " to " << apair[1] << " \n";
         outPath = graph.uBFS(apair[0], apair[1]); 
         string toWrite = formOutputString(outPath);
         output << toWrite;
