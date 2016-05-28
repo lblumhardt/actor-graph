@@ -87,7 +87,9 @@ int main(int argc, char *argv[]) {
         cout << " IM TRYNA FIND "<< apair[0] << " to " << apair[1] << " \n";
         outPath = graph.uBFS(apair[0], apair[1]); 
         string toWrite = formOutputString(outPath);
-        output << toWrite;
+        if(toWrite != "") {
+          output << toWrite;
+        }
         apair.clear();
       }
     }
