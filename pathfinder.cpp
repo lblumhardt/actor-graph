@@ -25,11 +25,11 @@ std::string formOutputString(vector<std::pair<std::string, Movie*>> v) {
 int main(int argc, char *argv[]) {
 
   //check number of args
-/*  if(argc != 5) {
+  if(argc != 5) {
     cout << "ERROR! Incorrect number of command line arguments \n";
     return -1;
   }
-*/
+
   //process the first arg
   const char* file = argv[1]; 
 
@@ -42,11 +42,11 @@ int main(int argc, char *argv[]) {
   else if(*temp == 'w') {
     weighted = true;
   }
-/*  else {
+  else {
     cout << "ERROR! Second argument should be either 'w' or 'u' \n";
     return -1;
   }
-*/
+
   //process the third arg
   //you should do a check on argv[3] tho
   std::filebuf f;
@@ -93,32 +93,8 @@ int main(int argc, char *argv[]) {
         apair.clear();
       }
     }
-
   } 
 
-  //vector<tuple<string,string,int>> v;
-  //graph.buildBFS(v);
-
-  graph.buildGraph();
-
-  //distance is 1, should work
-  //graph.findPath("ROCK LEE", "MIGHT GUY");
-  //graph.findPath("ROCK LEE", "JAMES PERSON");
-  //vector<pair<string,Movie*>> outPath;
-  //outPath = graph.uBFS("50 CENT", "ABDOO, ROSE");
-  //outPath = graph.uBFS("BACON, KEVIN (I)", "HOUNSOU, DJIMON");
-  //string s = formOutputString(outPath);
-  //cout << s << "\n";
-  //outPath = graph.uBFS("ABDOO, ROSE", "50 CENT");
-
-/* 
-  //invalid actors, should fail
-  graph.findPath("rock Lee", "MIGHT GUY");
-  graph.findPath("ROCK LEE", "MIGHT DIE");
-
-  //not in the same movie, should fail
-  graph.findPath("ROCK LEE", "JAMES PERSON");
-*/
   //dummy return value
   output.close();
   f.close();
