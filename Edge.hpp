@@ -10,11 +10,11 @@
 #define EDGE_HPP
 #include <iostream>
 #include <set>
-#include "ActorNode.hpp"
-#include "Movie.hpp"
+//#include "Movie.hpp"
+//#include "ActorNode.hpp"
 
 using namespace std;
-
+class ActorNode;
 class Edge {
 private:
   //member vars
@@ -31,6 +31,10 @@ public:
   string getActor2();
 
   string getMovie();  
+
+  int getWeight();
+
+  int getYear();
 };
 
 

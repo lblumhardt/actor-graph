@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
   output << "(actor)--[movie#@year]-->(actor)--...\n";
   ActorGraph graph;
   graph.loadFromFile(file, weighted); 
-
+  graph.buildGraph();
   bool have_header = false;
  
   while(actorPairs) {
@@ -84,8 +84,8 @@ int main(int argc, char *argv[]) {
       apair.push_back(next);
       vector<pair<string,Movie*>> outPath;
       if(apair.size() == 2) {
-        cout << " IM TRYNA FIND "<< apair[0] << " to " << apair[1] << " \n";
-        outPath = graph.uBFS(apair[0], apair[1]); 
+        cout << "Currently finding a path between " << apair[0] << " and " << apair[1] << "\n";
+        outPath = graph.Dijkstra(apair[0], apair[1], weighted); 
         string toWrite = formOutputString(outPath);
         if(toWrite != "") {
           output << toWrite;
@@ -96,6 +96,10 @@ int main(int argc, char *argv[]) {
 
   } 
 
+  //vector<tuple<string,string,int>> v;
+  //graph.buildBFS(v);
+
+  graph.buildGraph();
 
   //distance is 1, should work
   //graph.findPath("ROCK LEE", "MIGHT GUY");

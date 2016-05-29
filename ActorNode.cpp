@@ -6,6 +6,7 @@
  */
  
 #include <fstream>
+#include <limits>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -14,10 +15,39 @@
 
 using namespace std;
 
+
+ActorNode::Edge::Edge(ActorNode* a1, ActorNode* a2, Movie* mov) {
+  this->a1 = a1;
+  this->a2 = a2;
+  this->movie = mov; 
+}
+
+string ActorNode::Edge::getActor1() {
+  return this->a1->getName();
+}
+
+string ActorNode::Edge::getActor2() {
+  return this->a2->getName();
+}
+
+string ActorNode::Edge::getMovie() {
+  return this->movie->formUniqueTitle();
+}
+
+int ActorNode::Edge::getWeight() {
+  int year = this->movie->getYear();
+  return 1 + (2015 - year);
+}
+
+int ActorNode::Edge::getYear() {
+  return this->movie->getYear();
+}
+
 ActorNode::ActorNode(string name) {
   this->name = name;
   this->source = nullptr;
   this->visited = false;
+  this->dist = numeric_limits<int>::max();
 }
 
 bool ActorNode::isVisited() {
@@ -26,6 +56,11 @@ bool ActorNode::isVisited() {
 
 void ActorNode::visit() {
   this->visited = true;
+  return;
+}
+
+void ActorNode::unvisit() {
+  this->visited = false;
   return;
 }
 
@@ -58,4 +93,21 @@ void ActorNode::setSourceMovie(string s) {
 
 string ActorNode::getSourceMovie() {
   return this->sourceMovie;
+}
+
+vector<ActorNode::Edge*> ActorNode::getEdges() { 
+  return this->edges;
+}
+
+void ActorNode::addEdge(ActorNode::Edge* e) {
+  this->edges.push_back(e);
+}
+
+void ActorNode::updateDist(int d) {
+  this->dist = d;
+  return;
+}
+
+int ActorNode::getDist() {
+  return this->dist;
 }

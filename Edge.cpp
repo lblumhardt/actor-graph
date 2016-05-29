@@ -31,3 +31,12 @@ string Edge::getActor2() {
 string Edge::getMovie() {
   return this->movie->formUniqueTitle();
 }
+
+int Edge::getWeight() {
+  int year = this->movie->getYear();
+  return 1 + (2015 - year);
+}
+
+int Edge::getYear() {
+  return this->movie->getYear();
+}

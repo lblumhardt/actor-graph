@@ -11,20 +11,38 @@
 #include <iostream>
 #include <set>
 #include <vector>
+//#include "Edge.hpp"
 #include "Movie.hpp"
 
 using namespace std;
 
 class ActorNode {
-private:
-  //member vars
-  string name;
-  vector<string> movies;	//movies this actor has starred in
-  ActorNode* source;
-  string sourceMovie;
-  bool visited;
 
 public:
+
+  class Edge {
+  private:
+    //member vars
+    ActorNode* a1;
+    ActorNode* a2;
+    Movie* movie;
+
+  public:
+    Edge(ActorNode* a1, ActorNode* a2, Movie* mov);
+  
+    //getter declarations
+    string getActor1();
+
+    string getActor2();
+
+    string getMovie();  
+
+    int getWeight();
+
+    int getYear();
+  };
+
+ 
   ActorNode(string name);
 
   //getter declarations
@@ -38,6 +56,8 @@ public:
   bool isVisited();
 
   void visit(); 
+ 
+  void unvisit();
 
   void setSource(ActorNode* s);
 
@@ -46,6 +66,25 @@ public:
   void setSourceMovie(string s);
 
   string getSourceMovie();
+
+  vector<Edge*> getEdges();
+
+  void addEdge(Edge* e);
+
+  void updateDist(int d);
+
+  int getDist();
+
+private:
+  
+  //member vars
+  string name;
+  vector<string> movies;	//movies this actor has starred in
+  vector<Edge*> edges;
+  ActorNode* source;
+  string sourceMovie;
+  bool visited;
+  int dist; 
 };
 
 

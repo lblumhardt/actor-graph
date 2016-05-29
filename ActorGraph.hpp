@@ -15,6 +15,7 @@
 #include "Movie.hpp"
 #include "Edge.hpp"
 #include <unordered_map>
+#include <stack>
 #include <utility>
 #include <vector>
 
@@ -24,20 +25,17 @@ using namespace std;
 
 class ActorGraph {
   
-  class ActorNodeComp {  
-    
+  class minHeapMovie {
     public:
-    
-      bool operator()(ActorNode* p1, ActorNode* p2) const;
+      
+      bool operator()(Movie*& lhs, Movie*& rhs) const;
   };
 
-  class MovieComp {
-    
+  class minHeapActor {
     public:
-  
-      bool operator()(Movie* m1, Movie* m2) const;
+ 
+      bool operator()(ActorNode*& lhs, ActorNode*& rhs) const;
   };
-
 
 protected:
 
@@ -63,7 +61,14 @@ public:
   
   //main method used to find a path between two actors
   vector<pair<string,Movie*>> uBFS(string start, string dest);
+
+
+  void buildBFS(vector<tuple<string,string,int>> v);
+
+  void buildGraph();
+
+  vector<pair<string,Movie*>> Dijkstra(string start, string dest, bool weighted); 
+
+  void clearout(stack<ActorNode*> r);
 };
-
-
 #endif // ACTORGRAPH_HPP
