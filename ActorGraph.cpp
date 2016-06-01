@@ -291,10 +291,10 @@ void ActorGraph::buildBFS(vector<tuple<string,string,int>> &v) {
         currYear = currMovie->getYear();
         vector<string> cast = currMovie->getCast();
         string title = currMovie->formUniqueTitle();
-        //form edges between every cast member in this movie
-        for(int i=0; i < cast.size()-1; i++) {
-          ActorNode* a1 = allActors.at(cast[i]);
-          for(int j=i+1; j < cast.size(); j++) {
+        //form edges EFFECIENTLY between every cast member in this movie
+        //for(int i=0; i < cast.size()-1; i++) {
+          ActorNode* a1 = allActors.at(cast[0]);
+          for(int j=1; j < cast.size(); j++) {
             ActorNode* a2 = allActors.at(cast[j]);
         
             //build 2 edges (one for each actor)
@@ -303,7 +303,7 @@ void ActorGraph::buildBFS(vector<tuple<string,string,int>> &v) {
             a1->addEdge((ActorNode::Edge*)e1);
             a2->addEdge((ActorNode::Edge*)e2);
           }
-        }
+        //}
       //if the movie doesn't belong to this year, break
       } else {
         break;
@@ -376,7 +376,7 @@ void ActorGraph::buildUFIND(vector<tuple<string,string,int>> &v) {
         if(get<2>(tup) == 9999) {
           if(find(allActors.at(get<0>(tup))) == find(allActors.at(get<1>(tup)))) {
             get<2>(tup) = currYear;
-            cout << "I'm setting " << get<0>(tup) << " and " << get<1>(tup) << "'s connection year to: " << currYear << "\n";
+            //cout << "I'm setting " << get<0>(tup) << " and " << get<1>(tup) << "'s connection year to: " << currYear << "\n";
           } else {
             stillOneLeft = true;
           }
@@ -393,8 +393,81 @@ void ActorGraph::buildUFIND(vector<tuple<string,string,int>> &v) {
  **/
 ActorNode* ActorGraph::find(ActorNode* a) {
   ActorNode* curr = a;
+  stack<ActorNode*> reassign;
   while(curr->getSource() != nullptr) {
+    reassign.push(curr);
     curr = curr->getSource();
   }
+  while(reassign.size() > 1) {
+    reassign.top()->setSource(curr);
+    reassign.pop();
+  }
+  
   return curr;
+}
+
+double ActorGraph::findAverage(string a) {
+  double avg = 0;
+  int dist = 1;
+  int count = 0;
+  int actors_visited = 0;
+  ActorNode* curr = allActors.at(a);
+  priority_queue<ActorNode*, vector<ActorNode*>, minHeapActor> pq;
+  queue<ActorNode*> toReset;
+  pq.push(curr);  
+  toReset.push(curr);  
+  curr->updateDist(0);
+  int maxDist = 0;
+
+
+  while(!pq.empty()) {
+    curr = pq.top();
+    pq.pop();
+    
+    //check if actor is already "done"
+    if(curr->isVisited()) {
+      continue;
+    } 
+    curr->visit();
+    actors_visited++;
+    vector<ActorNode::Edge*> e = curr->getEdges();
+    //go through all of c's edges
+    for(int i=0; i < e.size(); i++) {
+      ActorNode::Edge* currEdge = e[i];
+      ActorNode* d = allActors.at(currEdge->getActor2());
+      if(d->isVisited()) {
+        continue;
+      }
+      int newWeight;     
+      newWeight = curr->getDist() + 1;
+      
+      if(newWeight < d->getDist()) {
+        d->updateDist(newWeight);
+        d->setSource(curr);
+        d->setSourceMovie(currEdge->getMovie());
+        pq.push(d);
+        toReset.push(d);
+      }
+    } 
+  }
+  stack<ActorNode*> toClear;
+  //go through the visited stack to count the average
+  while(!toReset.empty()) {
+    curr = toReset.front();
+    toReset.pop();
+    toClear.push(curr);
+    if(maxDist < curr->getDist()) {
+      maxDist = curr->getDist();
+    }
+
+    avg = avg + curr->getDist();
+  }
+  cout << "we visited: " << actors_visited << "\n";
+  avg = avg/(actors_visited-1);	//minus 1 bc we dont want to include the starting actor
+
+  cout << "max distance was: " << maxDist << "\n"; 
+
+  clearout(toClear);
+
+  return avg;
 }

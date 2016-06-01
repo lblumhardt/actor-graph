@@ -1,0 +1,56 @@
+Lucas Blumhardt: A12020745
+
+My extension program takes in 3 arguments.
+
+The first argument is the database file to be loaded into the graph. Typically
+movie_casts.tsv.
+
+The second argument is a header followed by a list of actors (separated by
+newline characters) that the user wishes to find the average distance of from
+every other other actor in the database.
+
+The third argument is the output file to write to.
+
+What the extension program does is takes in an actor and finds their relative
+distance to every other actor in the database. Or at least, every other actor
+that they can be linked to. It then averages out the distances and returns 
+that value. 
+
+The algorithm is similar to Dijkstra's but doesn't break when a certain
+destination vertex is reached, but rather when every actor has been visited
+or every reachable actor has been visited (pq is empty).
+
+I tested this program out by created my own cast database and solving the
+average numbers for different actors by hand. The program returned the same
+numbers and therefore makes me believe the program is functional.
+
+Contrary to what this assignment made me believe, there are a lot of actors
+with a lower average distance to every other actor than Kevin Bacon.
+
+Example of running my program
+
+./extension movie_casts.tsv ext_test.txt output.txt
+BACON, KEVIN (I)
+max distance was: 3
+and his avg was: 1.95353
+BLANCHETT, CATE
+max distance was: 3
+and his avg was: 1.95463
+REEVES, KEANU
+max distance was: 3
+and his avg was: 1.92394
+WILLIS, BRUCE
+max distance was: 3
+and his avg was: 1.86882
+HOUNSOU, DJIMON
+max distance was: 3
+and his avg was: 1.97219
+KIDMAN, NICOLE
+max distance was: 3
+and his avg was: 1.94234
+50 CENT
+max distance was: 3
+and his avg was: 1.97651
+GIAMATTI, PAUL
+max distance was: 3
+and his avg was: 1.89078

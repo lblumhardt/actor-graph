@@ -12,7 +12,6 @@
 
 #include <iostream>
 #include "ActorNode.hpp"
-#include "DisjointSet.hpp"
 #include "Movie.hpp"
 #include <unordered_map>
 #include <stack>
@@ -70,5 +69,8 @@ public:
   void clearout(stack<ActorNode*> r);
 
   ActorNode* find(ActorNode* a); 
+
+  double findAverage(string a); 
+
 };
 #endif // ACTORGRAPH_HPP

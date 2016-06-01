@@ -14,7 +14,7 @@ else
     LDFLAGS += -g
 endif
 
-all: pathfinder actorconnections
+all: pathfinder actorconnections extension
 
 
 
@@ -22,13 +22,15 @@ all: pathfinder actorconnections
 
 pathfinder: ActorGraph.o Movie.o ActorNode.o  
 
-actorconnections: ActorGraph.o Movie.o ActorNode.o DisjointSet.o
+actorconnections: ActorGraph.o Movie.o ActorNode.o
+
+extension: ActorGraph.o Movie.o ActorNode.o
 
 # include what ever source code *.hpp files ActorGraph relies on (these are merely the ones that were used in the solution)
 
 # Note: you do not have to include a *.cpp file if it aleady has a paired *.hpp file that is already included with class/method headers
 
-ActorGraph.o: Movie.hpp ActorNode.o DisjointSet.o
+ActorGraph.o: Movie.hpp ActorNode.o 
 
 
 clean:
