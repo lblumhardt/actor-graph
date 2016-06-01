@@ -3,8 +3,8 @@
  * Author: Lucas Blumhardt A12020745
  * Date:   5/22/2016
  *
- * This file is meant to exist as a container for starter code that you can use to read the input file format
- * defined in movie_casts.tsv. Feel free to modify any/all aspects as you wish.
+ * Class that holds all the methods used to search/build graphs made up of
+ * the actors and movies contained in the IMDB database
  */
  
 #include <fstream>
@@ -102,7 +102,6 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
       //Actor is already in the set
       else {
         //update movie in node
-        //cout <<  << " was already in allActors \n";
         auto it = allActors.find(actor_name);
         (*it).second->addToMovies(uniqueTitle);
         //cout << (*it).second->getName()  << " was already in allActors \n";
@@ -142,163 +141,6 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
   return true;
 }
 
-/* A naive, unweighted Breadth First Search algorithm to find the path from
- * one actor to another. Unfortunately it currently doesn't find the shortest path
- * */
-vector<pair<string,Movie*>> ActorGraph::uBFS(string start, string dest) {
-  bool done = false;
-  vector<pair<string,string>> pathway;
-  vector<pair<string,Movie*>> realPath;
-  //check if actors are represented in allActors
-  auto tempitr = allActors.find(start);
-  if(tempitr == allActors.end()) {
-    cout << start << " was NOT found in the database. Exiting. \n";
-    return realPath;
-  }
-  ActorNode* startNode = (*tempitr).second;  
-   
-  tempitr = allActors.find(dest);
-  if(tempitr == allActors.end()) {
-    cout << dest << " was NOT found in the database. Exiting. \n";
-    return realPath;
-  }
-  ActorNode* destNode = (*tempitr).second;
-   
-  //first check is to see if these two actors are only 1 step away
-  vector<string> m1 = startNode->getMovies();
-  vector<string> m2 = destNode->getMovies();
-  //cout << "dont look there \n";
-
-  string currMovie = "";
-  for(int i=0; i < m1.size(); i++) {
-  //while(itr1 != m1.end()) {
-    currMovie = m1[i];
-    //cout << start << " starred in " << currMovie << "\n";
-    //itr2 = m2.begin();
-    for(int j=0; j < m2.size(); j++) {
-    //while(itr2 != m2.end()) {
-      //cout << dest << " starred in " << (*itr2)->formUniqueTitle() << "\n";
-      if(currMovie == m2[j]) {
-        //cout << start << " and " << dest << " stared in " << currMovie << " together!! \n";
-        realPath.push_back(make_pair(start,allMovies.at(currMovie)));
-        realPath.push_back(make_pair(dest,nullptr));
-        return realPath;
-      } 
-    }
-  }
-
-   
-  queue<Movie*> moviesToExplore;
-  queue<ActorNode*> actorsToExplore;
-  ActorNode* currActor; 
-  vector<string> amovies;
-  Movie* currMovieP;
-  ActorNode* castMem;
-
-  actorsToExplore.push(startNode);
-  //explore actors and their films one at a time
-  while(!actorsToExplore.empty()) {
-    currActor = actorsToExplore.front();
-    actorsToExplore.pop();
-    
-    //if we already visited this actor, ignore it
-    if(currActor->isVisited()) {
-      continue;
-    } 
-    currActor->visit();
-    if(currActor->getName() == "FREEMAN, MORGAN (I)") {
-      //cout << "we are exploring morgan's moviesssss \n";
-    } 
-    //explore this actors movies
-    amovies = currActor->getMovies();
-    int movsize = amovies.size();
-    for(int i=0; i < movsize; i++) {
-      currMovie = amovies[i];
-      if(currActor->getName() == "50 CENT") {
-        //cout << currMovie << "\n";
-      }
-      if(currMovie == "AMISTAD1997") {
-        //cout << "well we found the right movie... \n";
-      }
-      //cout << currActor->getName() << " was in " << currMovie << "\n";
-      currMovieP = allMovies.at(currMovie);
-      
-      //ignore movies that we've visited the cast of
-      if(currMovieP->isVisited()) {
-        //cout << "i already visited " << currMovie << "\n";
-        continue;
-      }
-      currMovieP->visit();
-      vector<string> cast = currMovieP->getCast();
-      
-      //cout << "\n \n CURRENTLY VISITING " << currMovie << "\n \n";
-      //cout << "IT'S CAST IS AS FOLLOWS: \n";
-
-      //loop through to see if this movie matches any of dest's movies
-      for(int j=0; j < m2.size(); j++) {
-        if(currMovie == m2[j]) {
-          //this actor starred in a film with our dest actor
-          //cout << "CONNECTION FOUND! \n";
-          destNode->setSource(currActor);  
-          destNode->setSourceMovie(currMovie);
-          done = true;
-          break;
-        }
-         
-      }
-      if(done) {
-        break;
-      } 
-       
-      //A link wasn't found with this movie, so enqueue the cast
-      //set every castmember's source to currActor before enqueuing
-      int castSize = cast.size();
-      for(int j=0; j < castSize; j++) {
-        string actorName = cast[j];
-        if(actorName == "FREEMAN, MORGAN (I)") {
-          //cout << "nice i found morgan freeman from " << currMovie << " in the cast \n";
-        }
-        auto tempItr = allActors.find(actorName);
-        castMem = tempItr->second;
-        //cout << actorName << " is in the cast \n";
-        if(castMem->isVisited()) {
-          //cout << "I've encountered " << actorName << " previously. skipped \n";
-          continue;
-        }  
-        //cout << "setting " << actorName << " source actor to " << currActor->getName() << "\n";
-        castMem->setSource(currActor);
-        //cout << "setting " << actorName << " source movie to " << currMovie << "\n";
-        castMem->setSourceMovie(currMovie);
-        //cout << "pushing " << castMem->getName() << " to the queue \n";
-        actorsToExplore.push(castMem);  
-      } 
-    } 
-    if(done) {
-      break;
-    }
-  }
-  //cout << "made it out of ht ewhile loop \n"; 
-  //We have found the shortest path. Now to turn the path into a vector
-  
-  realPath.push_back(make_pair(destNode->getName(), nullptr)); 
-  pathway.push_back(make_pair(destNode->getName(),""));
-  currActor = destNode;
-  while(currActor->getSource() != nullptr) { 
-    //cout << "curractor: "<< currActor->getName() << " and their source: " << currActor->getSource()->getName() << "\n";
-    realPath.push_back(make_pair(currActor->getSource()->getName(),allMovies.at(currActor->getSourceMovie())));
-    pathway.push_back(make_pair(currActor->getSource()->getName(),currActor->getSourceMovie()));
-    currActor = currActor->getSource();
-  }
-
-  reverse(pathway.begin(),pathway.end());  
-  reverse(realPath.begin(), realPath.end());
-  //lets print to see the path
-  for(int i = 0; i < pathway.size(); i++) {
-    auto pear = pathway[i];
-    //cout << pear.first << " --> " << pear.second << "\n";
-  }
-  return realPath;
-}
 
 /* Builds edges linking every actor together by their movies
  * Edges are directed so for every relation, 2 edges exist between the actors
@@ -336,12 +178,18 @@ void ActorGraph::buildGraph() {
 vector<pair<string,Movie*>> ActorGraph::Dijkstra(string start, string dest, bool weighted) {
   vector<pair<string,Movie*>> finalPath;
   priority_queue<ActorNode*, vector<ActorNode*>, minHeapActor> pq;
-  stack<ActorNode*> path;
+  //stack<ActorNode*> path;
   stack<ActorNode*> toReset;
 
   bool finished = false;
 
   //push start actor onto the pq
+  //
+  //HEY
+  //
+  //MAKE THIS NOT FUCK UP WHEN START AND DEST AREN'T IN DATABASE
+  //
+  //
   ActorNode* startActor = allActors.at(start);
   startActor->updateDist(0);
   pq.push(startActor);
@@ -411,10 +259,142 @@ void ActorGraph::clearout(stack<ActorNode*> r) {
   }
 }
 
-/*Build the graph, then BFS the actors in the tuple. This is for a weighted search
+/*Build the graph one year at a time, then BFS the actors in the tuple. 
+ * This is for a weighted search.
  * */
-void ActorGraph::buildBFS(vector<tuple<string,string,int>> v) {
+void ActorGraph::buildBFS(vector<tuple<string,string,int>> &v) {
+  //put every movie inside the pq so we can grab them by year
   priority_queue<Movie*, vector<Movie*>, minHeapMovie> pq;
+  int i=0;
+  auto itr = allMovies.begin();
+  while(itr != allMovies.end()) {
+    i++;
+    pq.push(itr->second);
+    itr++;
+  }
+  cout << i << "\n";
+  int currYear;
+  Movie* currMovie;
+  bool once = true;
+  bool stillOneLeft = true;
+  while(stillOneLeft && !pq.empty()) {
+    int prevYear = pq.top()->getYear();
+    while(true) {
+      if(pq.empty()) {
+        cout<< "we'v exhausted all movies \n";
+        break;
+      }
+      currMovie = pq.top();
+      //if this movie is in the current year, build its edges
+      if(prevYear == currMovie->getYear()) {
+        pq.pop();
+        currYear = currMovie->getYear();
+        vector<string> cast = currMovie->getCast();
+        string title = currMovie->formUniqueTitle();
+        //form edges between every cast member in this movie
+        for(int i=0; i < cast.size()-1; i++) {
+          ActorNode* a1 = allActors.at(cast[i]);
+          for(int j=i+1; j < cast.size(); j++) {
+            ActorNode* a2 = allActors.at(cast[j]);
+        
+            //build 2 edges (one for each actor)
+            ActorNode::Edge* e1 = new ActorNode::Edge(a1, a2, currMovie);
+            ActorNode::Edge* e2 = new ActorNode::Edge(a2, a1, currMovie);
+            a1->addEdge((ActorNode::Edge*)e1);
+            a2->addEdge((ActorNode::Edge*)e2);
+          }
+        }
+      //if the movie doesn't belong to this year, break
+      } else {
+        break;
+      }
+    }
+    stillOneLeft = false;
+    for(tuple<string,string,int> &tup : v) {
+      //if the pair hasn't been linked yet
+      if(get<2>(tup) == 9999) {
+        vector<pair<string,Movie*>> path = Dijkstra(get<0>(tup), get<1>(tup), false);
+        //if pathsize greater than 1, a path has been found
+        if(path.size() != 1) {
+          get<2>(tup) = currYear;
+          cout << "I'm setting " << get<0>(tup) << " and " << get<1>(tup) << "'s connection year to: " << currYear << "\n";
+        }
+        else {
+          stillOneLeft = true;
+        }
+      }
+    } 
+    if(!stillOneLeft) {
+      break;
+    }
+  }
 }
 
+void ActorGraph::buildUFIND(vector<tuple<string,string,int>> &v) {
+  //put every movie inside the pq so we can grab them by year
+  cout << "we ufind\n";
+  priority_queue<Movie*, vector<Movie*>, minHeapMovie> pq;
+  int i=0;
+  auto itr = allMovies.begin();
+  while(itr != allMovies.end()) {
+    i++;
+    pq.push(itr->second);
+    itr++;
+  }
+  cout << i << "\n";
+  int currYear;
+  Movie* currMovie;
+  bool once = true;
+  bool stillOneLeft = true;
+  while(stillOneLeft && !pq.empty()) {
+    int prevYear = pq.top()->getYear();
+    while(true) {
+      if(pq.empty()) {
+        cout<< "we'v exhausted all movies \n";
+        break;
+      }
+      currMovie = pq.top();
+      //if this movie is in the current year, build its edges
+      if(prevYear == currMovie->getYear()) {
+        pq.pop();
+        currYear = currMovie->getYear();
+        vector<string> cast = currMovie->getCast();
+        string title = currMovie->formUniqueTitle();
+        ActorNode* mergeWith = find(allActors.at(cast[0]));	//this should never fail because every cast has at least 1 actor
+        for(int i=1; i < cast.size(); i++) {
+          ActorNode* mergeWith2 = find(allActors.at(cast[i]));
+          if(mergeWith->getName() != mergeWith2->getName()) {
+            mergeWith2->setSource(mergeWith);
+          }         
+        }
+      } else {
+        break;
+      }
+    }
+      stillOneLeft = false;     
+      for(tuple<string,string,int> &tup : v) {
+        if(get<2>(tup) == 9999) {
+          if(find(allActors.at(get<0>(tup))) == find(allActors.at(get<1>(tup)))) {
+            get<2>(tup) = currYear;
+            cout << "I'm setting " << get<0>(tup) << " and " << get<1>(tup) << "'s connection year to: " << currYear << "\n";
+          } else {
+            stillOneLeft = true;
+          }
+        }
+      }
+    }
+  } 
 
+
+/*A find method to be used in UFIND. It traverses up the tree to find
+ * the root (I use the source pointer in my actornode class in a different 
+ * way here because I don't want to make two ActorNode pointer member vars
+ * when I only use one at a time per method.)
+ **/
+ActorNode* ActorGraph::find(ActorNode* a) {
+  ActorNode* curr = a;
+  while(curr->getSource() != nullptr) {
+    curr = curr->getSource();
+  }
+  return curr;
+}

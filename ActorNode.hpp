@@ -21,25 +21,25 @@ class ActorNode {
 public:
 
   class Edge {
-  private:
-    //member vars
-    ActorNode* a1;
-    ActorNode* a2;
-    Movie* movie;
+    private:
+      //member vars
+      ActorNode* a1;
+      ActorNode* a2;
+      Movie* movie;
 
-  public:
-    Edge(ActorNode* a1, ActorNode* a2, Movie* mov);
+    public:
+      Edge(ActorNode* a1, ActorNode* a2, Movie* mov);
   
-    //getter declarations
-    string getActor1();
+      //getter declarations
+      string getActor1();
 
-    string getActor2();
+      string getActor2();
 
-    string getMovie();  
+      string getMovie();  
 
-    int getWeight();
+      int getWeight();
 
-    int getYear();
+      int getYear();
   };
 
  
@@ -81,7 +81,7 @@ private:
   string name;
   vector<string> movies;	//movies this actor has starred in
   vector<Edge*> edges;
-  ActorNode* source;
+  ActorNode* source;		//to be used differently in UnionFind and BFS
   string sourceMovie;
   bool visited;
   int dist; 

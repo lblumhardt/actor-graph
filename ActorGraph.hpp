@@ -12,8 +12,8 @@
 
 #include <iostream>
 #include "ActorNode.hpp"
+#include "DisjointSet.hpp"
 #include "Movie.hpp"
-#include "Edge.hpp"
 #include <unordered_map>
 #include <stack>
 #include <utility>
@@ -59,16 +59,16 @@ public:
      */
   bool loadFromFile(const char* in_filename, bool use_weighted_edges);
   
-  //main method used to find a path between two actors
-  vector<pair<string,Movie*>> uBFS(string start, string dest);
+  void buildBFS(vector<tuple<string,string,int>> &v);
 
-
-  void buildBFS(vector<tuple<string,string,int>> v);
+  void buildUFIND(vector<tuple<string,string,int>> &v);
 
   void buildGraph();
 
   vector<pair<string,Movie*>> Dijkstra(string start, string dest, bool weighted); 
 
   void clearout(stack<ActorNode*> r);
+
+  ActorNode* find(ActorNode* a); 
 };
 #endif // ACTORGRAPH_HPP
