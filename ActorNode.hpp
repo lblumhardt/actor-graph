@@ -35,6 +35,8 @@ public:
 
       string getActor2();
 
+      string getOtherActor(ActorNode* a);
+
       string getMovie();  
 
       int getWeight();

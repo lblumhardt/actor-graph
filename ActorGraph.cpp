@@ -183,13 +183,19 @@ vector<pair<string,Movie*>> ActorGraph::Dijkstra(string start, string dest, bool
 
   bool finished = false;
 
-  //push start actor onto the pq
-  //
-  //HEY
-  //
-  //MAKE THIS NOT FUCK UP WHEN START AND DEST AREN'T IN DATABASE
-  //
-  //
+  //check if start and dest are valid actors
+  auto itrCheck = allActors.find(start);
+  if(itrCheck == allActors.end()) {
+    cout << "ERROR: " << start << " wasn't in the database \n";
+    return finalPath;
+  }
+  itrCheck = allActors.find(dest);
+  if(itrCheck == allActors.end()) {
+    cout << "ERROR: " << dest << " wasn't in the database \n";
+    return finalPath;
+  }
+
+  //push start actor onto pq
   ActorNode* startActor = allActors.at(start);
   startActor->updateDist(0);
   pq.push(startActor);
@@ -213,6 +219,7 @@ vector<pair<string,Movie*>> ActorGraph::Dijkstra(string start, string dest, bool
     //go through all of c's edges
     for(int i=0; i < e.size(); i++) {
       ActorNode::Edge* currEdge = e[i];
+      //ActorNode* d = allActors.at(currEdge->getOtherActor(c));
       ActorNode* d = allActors.at(currEdge->getActor2());
       if(d->isVisited()) {
         continue;
@@ -311,6 +318,15 @@ void ActorGraph::buildBFS(vector<tuple<string,string,int>> &v) {
     }
     stillOneLeft = false;
     for(tuple<string,string,int> &tup : v) {
+      //check if actors in tuple are valid 
+      auto itrCheck = allActors.find(get<0>(tup));
+      if(itrCheck == allActors.end()) {
+        continue;
+      }
+      itrCheck = allActors.find(get<1>(tup));
+      if(itrCheck == allActors.end()) {
+        continue;
+      } 
       //if the pair hasn't been linked yet
       if(get<2>(tup) == 9999) {
         vector<pair<string,Movie*>> path = Dijkstra(get<0>(tup), get<1>(tup), false);
@@ -373,6 +389,14 @@ void ActorGraph::buildUFIND(vector<tuple<string,string,int>> &v) {
     }
       stillOneLeft = false;     
       for(tuple<string,string,int> &tup : v) {
+        auto itrCheck = allActors.find(get<0>(tup));
+        if(itrCheck == allActors.end()) {
+          continue;
+        }
+        itrCheck = allActors.find(get<1>(tup));
+        if(itrCheck == allActors.end()) {
+          continue;
+        } 
         if(get<2>(tup) == 9999) {
           if(find(allActors.at(get<0>(tup))) == find(allActors.at(get<1>(tup)))) {
             get<2>(tup) = currYear;
@@ -411,6 +435,15 @@ double ActorGraph::findAverage(string a) {
   int dist = 1;
   int count = 0;
   int actors_visited = 0;
+
+
+  //check if a is a valid actor
+  auto itrCheck = allActors.find(a);
+  if(itrCheck == allActors.end()) {
+    cout << "ERROR: " << a << " wasn't in the database \n";
+    return 0;
+  }
+
   ActorNode* curr = allActors.at(a);
   priority_queue<ActorNode*, vector<ActorNode*>, minHeapActor> pq;
   queue<ActorNode*> toReset;
@@ -434,6 +467,7 @@ double ActorGraph::findAverage(string a) {
     //go through all of c's edges
     for(int i=0; i < e.size(); i++) {
       ActorNode::Edge* currEdge = e[i];
+      //ActorNode* d = allActors.at(currEdge->getOtherActor(curr));
       ActorNode* d = allActors.at(currEdge->getActor2());
       if(d->isVisited()) {
         continue;

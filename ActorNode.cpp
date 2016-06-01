@@ -30,6 +30,20 @@ string ActorNode::Edge::getActor2() {
   return this->a2->getName();
 }
 
+string ActorNode::Edge::getOtherActor(ActorNode* a) {
+  string comp = a->getName();
+  if(comp == a2->getName()) {
+    return a1->getName();
+  }
+  else if(comp == a1->getName()) {
+    return a2->getName();
+  }
+  else {
+    cout << "ERROR! WE SHOULD NEVER SEE THIS! getOtherActor in Edge class doesn't work \n";
+  }
+  return comp;
+}
+
 string ActorNode::Edge::getMovie() {
   return this->movie->formUniqueTitle();
 }
