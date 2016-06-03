@@ -26,14 +26,12 @@ public:
 
   string formUniqueTitle(); 
 
-  //getter declarations
   string getTitle();
 
   int getYear();
 
   vector<string> getCast();
   
-  //mutator declarations
   bool addToCast(string actor);
 
   bool isVisited();

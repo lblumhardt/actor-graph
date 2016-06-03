@@ -34,8 +34,7 @@ bool ActorGraph::minHeapActor::operator()(ActorNode*& lhs, ActorNode*& rhs) cons
   return lhs->getDist() > rhs->getDist();
 }
 
-ActorGraph::ActorGraph(void) {
-}
+ActorGraph::ActorGraph(void) {}
 
 ActorGraph::~ActorGraph() {
   allActors.clear();
@@ -49,104 +48,82 @@ ActorGraph::~ActorGraph() {
 bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) {
   // Initialize the file stream
   ifstream infile(in_filename);
-
   int numAct = 0;
   int numMov = 0;
-
   bool have_header = false;
 
   // keep reading lines until the end of file is reached
   while (infile) {
     string s;
-  
     // get the next line
     if (!getline( infile, s )) break;
+    //skip header
     if (!have_header) {
-      // skip the header
       have_header = true;
       continue;
     }
 
     istringstream ss( s );
     vector <string> record;
-
     while (ss) {
       string next;
-      
       // get the next string before hitting a tab character and put it in 'next'
       if (!getline( ss, next, '\t' )) break;
-
       record.push_back( next );
-      }
+    }
     
-      if (record.size() != 3) {
-        // we should have exactly 3 columns
-        continue;
-      }
+    if (record.size() != 3) {
+      // we should have exactly 3 columns
+      continue;
+    }
 
-      string actor_name(record[0]);
-      string movie_title(record[1]);
-      int movie_year = stoi(record[2]);
+    string actor_name(record[0]);
+    string movie_title(record[1]);
+    int movie_year = stoi(record[2]);
 
-      string uniqueTitle = movie_title + to_string(movie_year);
-      Movie* currMovie = new Movie(movie_title, movie_year);
-      ActorNode* currActor = new ActorNode(actor_name);
-  
-      // we have an actor/movie relationship, now what?
-      // does allActors already contain an ActorNode for this actor?
-      //cout<< "we are checking this actor: " << actor_name << "\n";
-      //unordered_map<string,ActorNode*>::iterator checkitr = allActors.find(actor_name);
-      if(allActors.find(actor_name) == allActors.end()) {
-      //int c = allActors.count(actor_name);
-      
-      //no it does not have it yet
-      //if(c == 0) {
-      //if(checkitr == allActors.end()) {
-        //add it to map, update movie in node
-        allActors.insert(std::make_pair(actor_name,currActor));
-        numAct++;
-        //cout << "I'm adding " << actor_name << " to allActors for the first time! \n";
-        currActor->addToMovies(uniqueTitle);
-      }
-      
-      //Actor is already in the set
-      else {
-        //update movie in node
-        auto it = allActors.find(actor_name);
-        (*it).second->addToMovies(uniqueTitle);
-        //cout << (*it).second->getName()  << " was already in allActors \n";
+    string uniqueTitle = movie_title + to_string(movie_year);
+    Movie* currMovie = new Movie(movie_title, movie_year);
+    ActorNode* currActor = new ActorNode(actor_name);
 
-      } 
-      //Does allMovies already contain this Movie?
-      //unordered_map<string, Movie*>::iterator movItr = allMovies.find(uniqueTitle);
-      //c = allMovies.count(uniqueTitle); 
-      //no it does not have it yet
-      if(allMovies.find(uniqueTitle) == allMovies.end()) {
-        //add it to map, update its cast
-        //cout << "I'm adding " << uniqueTitle << " to allMovies for the first time! \n";
-        numMov++;
-        allMovies.insert(std::make_pair(uniqueTitle, currMovie));
-        (*currMovie).addToCast(actor_name);
-        //cout << "I added " << actor_name << " to " << uniqueTitle << "'s cast \n";
-      }
+    // does allActors already contain an ActorNode for this actor?
+    if(allActors.find(actor_name) == allActors.end()) {
+      //add it to map, update movie in node
+      allActors.insert(std::make_pair(actor_name,currActor));
+      numAct++;
+      //cout << "I'm adding " << actor_name << " to allActors for the first time! \n";
+      currActor->addToMovies(uniqueTitle);
+    }
+     
+    //Actor is already in the set
+    else {
+      //update movie in node
+      auto it = allActors.find(actor_name);
+      (*it).second->addToMovies(uniqueTitle);
+      //cout << (*it).second->getName()  << " was already in allActors \n";
+    } 
+    //Does allMovies already contain this Movie?
+    if(allMovies.find(uniqueTitle) == allMovies.end()) {
+      //add it to map, update its cast
+      //cout << "I'm adding " << uniqueTitle << " to allMovies for the first time! \n";
+      numMov++;
+      allMovies.insert(std::make_pair(uniqueTitle, currMovie));
+      (*currMovie).addToCast(actor_name);
+    }
 
-      //movie already exists
-      else {
-        //update it's cast
-        //cout << uniqueTitle << " was already in allMovies. Updating its cast \n";
-        auto it2 = allMovies.find(uniqueTitle);
-        //cout << "I added " << actor_name << " to " << uniqueTitle << "'s cast \n";
-        (*it2).second->addToCast(actor_name);
-      }
+    //movie already exists
+    else {
+      //update it's cast
+      //cout << uniqueTitle << " was already in allMovies. Updating its cast \n";
+      auto it2 = allMovies.find(uniqueTitle);
+      (*it2).second->addToCast(actor_name);
+    }
   }
-  //cout << "Total num of Actors: " << numAct << "\n";
-  //cout << "Total num of Movies: " << numMov << "\n";
+
   if (!infile.eof()) {
     cerr << "Failed to read " << in_filename << "!\n";
     return false;
   }
   infile.close();
-
   return true;
 }
 
@@ -214,7 +191,6 @@ vector<pair<string,Movie*>> ActorGraph::Dijkstra(string start, string dest, bool
     pq.pop();
     //check if we have found our destination actor
     if(c->getName() == dest) {
-      //cout << "UH OH we found our boy! \n";
       finished = true;
       break;
     }
@@ -227,7 +203,6 @@ vector<pair<string,Movie*>> ActorGraph::Dijkstra(string start, string dest, bool
     //go through all of c's edges
     for(int i=0; i < e.size(); i++) {
       ActorNode::Edge* currEdge = e[i];
-      //ActorNode* d = allActors.at(currEdge->getOtherActor(c));
       ActorNode* d = currEdge->getActor2();
       if(d->isVisited()) {
         continue;
@@ -253,7 +228,6 @@ vector<pair<string,Movie*>> ActorGraph::Dijkstra(string start, string dest, bool
   ActorNode* c = allActors.at(dest);
   finalPath.push_back(make_pair(dest, nullptr));
   while(c->getSource() != nullptr) {
-    //cout << c->getName() << "'s source is: " << c->getSource()->getName() << "\n";
     finalPath.push_back(make_pair(c->getSource()->getName(), allMovies.at(c->getSourceMovie())));
     c = c->getSource();
   }
@@ -275,7 +249,7 @@ void ActorGraph::clearout(stack<ActorNode*> r) {
 }
 
 /*Build the graph one year at a time, then BFS the actors in the tuple. 
- * This is for a weighted search. BFS is just an unweighted call to Dijkstra's
+ * BFS is just an unweighted call to Dijkstra's
  * */
 void ActorGraph::buildBFS(vector<tuple<string,string,int>> &v) {
   //put every movie inside the pq so we can grab them by year
@@ -292,6 +266,8 @@ void ActorGraph::buildBFS(vector<tuple<string,string,int>> &v) {
   Movie* currMovie;
   bool once = true;
   bool stillOneLeft = true;
+  
+
   while(stillOneLeft && !pq.empty()) {
     int prevYear = pq.top()->getYear();
     while(true) {
@@ -339,7 +315,6 @@ void ActorGraph::buildBFS(vector<tuple<string,string,int>> &v) {
         //if pathsize greater than 1, a path has been found
         if(path.size() != 1) {
           get<2>(tup) = currYear;
-          //cout << "I'm setting " << get<0>(tup) << " and " << get<1>(tup) << "'s connection year to: " << currYear << "\n";
         }
         else {
           stillOneLeft = true;
@@ -352,6 +327,10 @@ void ActorGraph::buildBFS(vector<tuple<string,string,int>> &v) {
   }
 }
 
+/*Build the graph one year at a time, then check if find returns 
+ * the same thing for the disjoint sets
+ * This is just implemented with the ActorNode source field
+ * */
 void ActorGraph::buildUFIND(vector<tuple<string,string,int>> &v) {
   //put every movie inside the pq so we can grab them by year
   cout << "we ufind\n";
@@ -406,7 +385,6 @@ void ActorGraph::buildUFIND(vector<tuple<string,string,int>> &v) {
       if(get<2>(tup) == 9999) {
         if(find(allActors.at(get<0>(tup))) == find(allActors.at(get<1>(tup)))) {
           get<2>(tup) = currYear;
-          //cout << "I'm setting " << get<0>(tup) << " and " << get<1>(tup) << "'s connection year to: " << currYear << "\n";
         } else {
           stillOneLeft = true;
         }
@@ -436,6 +414,9 @@ ActorNode* ActorGraph::find(ActorNode* a) {
   return curr;
 }
 
+/* The extension. Finds the average distance to every other actor in the database
+ * This number is typically slightly below 2 for famous mainstream actors
+ * */
 double ActorGraph::findAverage(string a) {
   double avg = 0;
   int dist = 1;

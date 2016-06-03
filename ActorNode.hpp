@@ -3,7 +3,7 @@
  * Author: Lucas Blumhardt A12020745 
  * Date:   5/23/2016
  *
- * Nodes used in the graphs made during pathFind (Union/Find)
+ * Nodes used in the graphs made in pathfinder and actorconnections
  */
 
 #ifndef ACTORNODE_HPP
@@ -11,7 +11,6 @@
 #include <iostream>
 #include <set>
 #include <vector>
-//#include "Edge.hpp"
 #include "Movie.hpp"
 
 using namespace std;
@@ -19,7 +18,7 @@ using namespace std;
 class ActorNode {
 
 public:
-
+  //Edge class used for BFS/Dijkstra's
   class Edge {
     private:
       //member vars
@@ -49,12 +48,10 @@ public:
 
   ~ActorNode();
 
-  //getter declarations
   string getName();
 
   vector<string> getMovies();
   
-  //mutator declarations
   bool addToMovies(string movieToAdd);
  
   bool isVisited();

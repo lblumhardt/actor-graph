@@ -18,18 +18,18 @@
 #include <utility>
 #include <vector>
 
-// Maybe include some data structures here
-
 using namespace std;
 
 class ActorGraph {
   
+  //comparator class for a min Heap of movies (w/ respect to release year)
   class minHeapMovie {
     public:
       
       bool operator()(Movie*& lhs, Movie*& rhs) const;
   };
 
+  //comparator class for a min heap of Actors (w/ respect to their dist fields)
   class minHeapActor {
     public:
  
@@ -41,23 +41,11 @@ protected:
   unordered_map<string, ActorNode*> allActors;
   unordered_map<string, Movie*> allMovies;
     
-
 public:
-    ActorGraph(void);
+  ActorGraph(void);
 
-    ~ActorGraph();
+  ~ActorGraph();
 
-    // Maybe add some more methods here
-  
-    /** You can modify this method definition as you wish
-     *
-     * Load the graph from a tab-delimited file of actor->movie relationships.
-     *
-     * in_filename - input filename
-     * use_weighted_edges - if true, compute edge weights as 1 + (2015 - movie_year), otherwise all edge weights will be 1
-     *
-     * return true if file was loaded sucessfully, false otherwise
-     */
   bool loadFromFile(const char* in_filename, bool use_weighted_edges);
   
   void buildBFS(vector<tuple<string,string,int>> &v);
