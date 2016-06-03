@@ -45,6 +45,8 @@ protected:
 public:
     ActorGraph(void);
 
+    ~ActorGraph();
+
     // Maybe add some more methods here
   
     /** You can modify this method definition as you wish

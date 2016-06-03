@@ -34,7 +34,13 @@ bool ActorGraph::minHeapActor::operator()(ActorNode*& lhs, ActorNode*& rhs) cons
   return lhs->getDist() > rhs->getDist();
 }
 
-ActorGraph::ActorGraph(void) {}
+ActorGraph::ActorGraph(void) {
+}
+
+ActorGraph::~ActorGraph() {
+  allActors.clear();
+  allMovies.clear();
+}
 
 /* Loads in the actors and their movies from in_filename
  * Creates a cast list for every Movie and a list of roles for every Actor
@@ -88,10 +94,14 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
   
       // we have an actor/movie relationship, now what?
       // does allActors already contain an ActorNode for this actor?
-      int c = allActors.count(actor_name);
+      //cout<< "we are checking this actor: " << actor_name << "\n";
+      //unordered_map<string,ActorNode*>::iterator checkitr = allActors.find(actor_name);
+      if(allActors.find(actor_name) == allActors.end()) {
+      //int c = allActors.count(actor_name);
       
       //no it does not have it yet
-      if(c == 0) {
+      //if(c == 0) {
+      //if(checkitr == allActors.end()) {
         //add it to map, update movie in node
         allActors.insert(std::make_pair(actor_name,currActor));
         numAct++;
@@ -106,13 +116,12 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         (*it).second->addToMovies(uniqueTitle);
         //cout << (*it).second->getName()  << " was already in allActors \n";
 
-      }
-
+      } 
       //Does allMovies already contain this Movie?
-      c = allMovies.count(uniqueTitle);
-  
+      //unordered_map<string, Movie*>::iterator movItr = allMovies.find(uniqueTitle);
+      //c = allMovies.count(uniqueTitle); 
       //no it does not have it yet
-      if(c == 0) {
+      if(allMovies.find(uniqueTitle) == allMovies.end()) {
         //add it to map, update its cast
         //cout << "I'm adding " << uniqueTitle << " to allMovies for the first time! \n";
         numMov++;
@@ -158,7 +167,7 @@ void ActorGraph::buildGraph() {
     //form edges between every cast member in this movie
     for(int i=0; i < cast.size()-1; i++) {
       ActorNode* a1 = allActors.at(cast[i]);
-      for(int j=i+1; j < cast.size(); j++) {
+    for(int j=i+1; j < cast.size(); j++) {
         ActorNode* a2 = allActors.at(cast[j]);
         
         //build 2 edges (one for each actor)
@@ -178,7 +187,6 @@ void ActorGraph::buildGraph() {
 vector<pair<string,Movie*>> ActorGraph::Dijkstra(string start, string dest, bool weighted) {
   vector<pair<string,Movie*>> finalPath;
   priority_queue<ActorNode*, vector<ActorNode*>, minHeapActor> pq;
-  //stack<ActorNode*> path;
   stack<ActorNode*> toReset;
 
   bool finished = false;
@@ -220,7 +228,7 @@ vector<pair<string,Movie*>> ActorGraph::Dijkstra(string start, string dest, bool
     for(int i=0; i < e.size(); i++) {
       ActorNode::Edge* currEdge = e[i];
       //ActorNode* d = allActors.at(currEdge->getOtherActor(c));
-      ActorNode* d = allActors.at(currEdge->getActor2());
+      ActorNode* d = currEdge->getActor2();
       if(d->isVisited()) {
         continue;
       }
@@ -267,7 +275,7 @@ void ActorGraph::clearout(stack<ActorNode*> r) {
 }
 
 /*Build the graph one year at a time, then BFS the actors in the tuple. 
- * This is for a weighted search.
+ * This is for a weighted search. BFS is just an unweighted call to Dijkstra's
  * */
 void ActorGraph::buildBFS(vector<tuple<string,string,int>> &v) {
   //put every movie inside the pq so we can grab them by year
@@ -299,18 +307,16 @@ void ActorGraph::buildBFS(vector<tuple<string,string,int>> &v) {
         vector<string> cast = currMovie->getCast();
         string title = currMovie->formUniqueTitle();
         //form edges EFFECIENTLY between every cast member in this movie
-        //for(int i=0; i < cast.size()-1; i++) {
-          ActorNode* a1 = allActors.at(cast[0]);
-          for(int j=1; j < cast.size(); j++) {
-            ActorNode* a2 = allActors.at(cast[j]);
-        
-            //build 2 edges (one for each actor)
-            ActorNode::Edge* e1 = new ActorNode::Edge(a1, a2, currMovie);
-            ActorNode::Edge* e2 = new ActorNode::Edge(a2, a1, currMovie);
-            a1->addEdge((ActorNode::Edge*)e1);
-            a2->addEdge((ActorNode::Edge*)e2);
-          }
-        //}
+        ActorNode* a1 = allActors.at(cast[0]);
+        for(int j=1; j < cast.size(); j++) {
+          ActorNode* a2 = allActors.at(cast[j]);
+      
+          //build 2 edges (one for each actor)
+          ActorNode::Edge* e1 = new ActorNode::Edge(a1, a2, currMovie);
+          ActorNode::Edge* e2 = new ActorNode::Edge(a2, a1, currMovie);
+          a1->addEdge((ActorNode::Edge*)e1);
+          a2->addEdge((ActorNode::Edge*)e2);
+        }
       //if the movie doesn't belong to this year, break
       } else {
         break;
@@ -333,7 +339,7 @@ void ActorGraph::buildBFS(vector<tuple<string,string,int>> &v) {
         //if pathsize greater than 1, a path has been found
         if(path.size() != 1) {
           get<2>(tup) = currYear;
-          cout << "I'm setting " << get<0>(tup) << " and " << get<1>(tup) << "'s connection year to: " << currYear << "\n";
+          //cout << "I'm setting " << get<0>(tup) << " and " << get<1>(tup) << "'s connection year to: " << currYear << "\n";
         }
         else {
           stillOneLeft = true;
@@ -387,27 +393,27 @@ void ActorGraph::buildUFIND(vector<tuple<string,string,int>> &v) {
         break;
       }
     }
-      stillOneLeft = false;     
-      for(tuple<string,string,int> &tup : v) {
-        auto itrCheck = allActors.find(get<0>(tup));
-        if(itrCheck == allActors.end()) {
-          continue;
-        }
-        itrCheck = allActors.find(get<1>(tup));
-        if(itrCheck == allActors.end()) {
-          continue;
-        } 
-        if(get<2>(tup) == 9999) {
-          if(find(allActors.at(get<0>(tup))) == find(allActors.at(get<1>(tup)))) {
-            get<2>(tup) = currYear;
-            //cout << "I'm setting " << get<0>(tup) << " and " << get<1>(tup) << "'s connection year to: " << currYear << "\n";
-          } else {
-            stillOneLeft = true;
-          }
+    stillOneLeft = false;     
+    for(tuple<string,string,int> &tup : v) {
+      auto itrCheck = allActors.find(get<0>(tup));
+      if(itrCheck == allActors.end()) {
+        continue;
+      }
+      itrCheck = allActors.find(get<1>(tup));
+      if(itrCheck == allActors.end()) {
+        continue;
+      } 
+      if(get<2>(tup) == 9999) {
+        if(find(allActors.at(get<0>(tup))) == find(allActors.at(get<1>(tup)))) {
+          get<2>(tup) = currYear;
+          //cout << "I'm setting " << get<0>(tup) << " and " << get<1>(tup) << "'s connection year to: " << currYear << "\n";
+        } else {
+          stillOneLeft = true;
         }
       }
     }
-  } 
+  }
+} 
 
 
 /*A find method to be used in UFIND. It traverses up the tree to find
@@ -468,7 +474,7 @@ double ActorGraph::findAverage(string a) {
     for(int i=0; i < e.size(); i++) {
       ActorNode::Edge* currEdge = e[i];
       //ActorNode* d = allActors.at(currEdge->getOtherActor(curr));
-      ActorNode* d = allActors.at(currEdge->getActor2());
+      ActorNode* d = currEdge->getActor2();
       if(d->isVisited()) {
         continue;
       }

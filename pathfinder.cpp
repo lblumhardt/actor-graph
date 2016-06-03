@@ -56,9 +56,10 @@ int main(int argc, char *argv[]) {
   //process the fourth arg
   std::ofstream output(argv[4], std::ofstream::out);
   output << "(actor)--[movie#@year]-->(actor)--...\n";
-  ActorGraph graph;
-  graph.loadFromFile(file, weighted); 
-  graph.buildGraph();
+  ActorGraph* graph = new ActorGraph();
+  graph->loadFromFile(file, weighted); 
+  cout << "seg fault? \n";
+  graph->buildGraph();
   bool have_header = false;
  
   while(actorPairs) {
@@ -85,7 +86,7 @@ int main(int argc, char *argv[]) {
       vector<pair<string,Movie*>> outPath;
       if(apair.size() == 2) {
         cout << "Currently finding a path between " << apair[0] << " and " << apair[1] << "\n";
-        outPath = graph.Dijkstra(apair[0], apair[1], weighted); 
+        outPath = graph->Dijkstra(apair[0], apair[1], weighted); 
         string toWrite = formOutputString(outPath);
         if(toWrite != "") {
           output << toWrite;
@@ -95,6 +96,7 @@ int main(int argc, char *argv[]) {
     }
   } 
 
+  delete graph;
   //dummy return value
   output.close();
   f.close();

@@ -46,8 +46,8 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  ActorGraph graph;
-  graph.loadFromFile(file, true); 
+  ActorGraph* graph = new ActorGraph();
+  graph->loadFromFile(file, true); 
   //graph.buildGraph();
   bool have_header = false;
   vector<tuple<string,string,int>> pathsToFind;
@@ -82,15 +82,16 @@ int main(int argc, char *argv[]) {
     }
   } 
   if(bfs) {
-    graph.buildBFS(pathsToFind);
+    graph->buildBFS(pathsToFind);
   }
   else {
-    graph.buildUFIND(pathsToFind);    
+    graph->buildUFIND(pathsToFind);    
   }
   for(tuple<string,string,int> &tup : pathsToFind) {
     output << formString(tup);
   } 
 
+  delete graph;
 
   //dummy return value
   output.close();

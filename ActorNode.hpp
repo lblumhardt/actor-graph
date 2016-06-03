@@ -33,7 +33,7 @@ public:
       //getter declarations
       string getActor1();
 
-      string getActor2();
+      ActorNode* getActor2();
 
       string getOtherActor(ActorNode* a);
 
@@ -46,6 +46,8 @@ public:
 
  
   ActorNode(string name);
+
+  ~ActorNode();
 
   //getter declarations
   string getName();
@@ -76,6 +78,8 @@ public:
   void updateDist(int d);
 
   int getDist();
+
+  void deleteEdges();
 
 private:
   
